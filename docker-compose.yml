@@ -6,5 +6,19 @@ services:
     volumes:
       - ./dbt:/usr/app/dbt
     environment:
-      DBT_PROFILES_DIR: /usr/app/dbt/profiles
+      DBT_PROFILES_DIR: ${DBT_PROFILES_DIR}
     command: dbt run
+  clickhouse:
+    image: yandex/clickhouse-server:latest
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+    environment:
+      CLICKHOUSE_DB: super_vault
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+
+volumes:
+  clickhouse_data:

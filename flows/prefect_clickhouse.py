@@ -10,7 +10,7 @@ load_dotenv()
 def create_clickhouse_connection():
     try:
         client = Client(
-            host='localhost',
+            host='clickhouse',  # Use 'clickhouse' if running from another container
             port=9000,
             database='super_vault',
             user='default',
