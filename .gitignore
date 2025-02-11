@@ -2,3 +2,5 @@
 .env
 .venv
 .python-version
+uv.lock
+clickhouse
