@@ -1,0 +1,10 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  dbt:
+    image: fishtownanalytics/dbt:1.0.0
+    volumes:
+      - ./dbt:/usr/app/dbt
+    environment:
+      DBT_PROFILES_DIR: /usr/app/dbt/profiles
+    command: dbt run

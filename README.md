@@ -19,3 +19,12 @@ uvx prefect server start
 python flows/hello_world.py
 ```
 
+
+## start dbt
+```
+docker-compose run dbt init
+```
+
+
+
+
