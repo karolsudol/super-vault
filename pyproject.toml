@@ -9,5 +9,7 @@ dependencies = [
     "clickhouse-driver>=0.2.1",
     "pandas>=2.1.1",
     "python-dotenv>=1.0.1",
-    "prefect-dbt>=0.1.1"
+    "prefect-dbt>=0.1.1",
+    "requests>=2.0.0",
+    "web3>=7.8.0"
 ]

@@ -1,5 +1,6 @@
 .task.md
 .env
+.env.local
 .venv
 .python-version
 uv.lock
