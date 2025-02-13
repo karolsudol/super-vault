@@ -1,7 +1,10 @@
 .task.md
 .env
 .env.local
+.env.example
 .venv
 .python-version
 uv.lock
 clickhouse
+data
+logs

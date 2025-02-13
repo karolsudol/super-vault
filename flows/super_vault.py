@@ -16,7 +16,7 @@ class SuperformConfig:
         
         self.chain_id = chain_id
         self.chain_name = 'Ethereum'
-        self.rpc = 'https://eth.public-rpc.com'
+        self.rpc = 'https://eth.llamarpc.com'
         self.w3 = Web3(Web3.HTTPProvider(self.rpc))
         self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
         self.timeout = 30
@@ -72,12 +72,12 @@ class SuperformAPI:
         return result
 
     def get_vaults(self):
-        action = f'vaults'
+        action = 'vaults'
         response = self._request(action)
         return response
 
     def get_supervaults(self):
-        action = f'stats/vault/supervaults'
+        action = 'stats/vault/supervaults'
         response = self._request(action)
         return response
     
@@ -128,7 +128,7 @@ def get_supervault_data(supervault):
 
 with Flow("SuperVault Flow") as flow:
     chain_id = 1  # Ethereum chain ID
-    vault_address = os.getenv('VAULT_ADDRESS')  # Get address from .env.local
+    vault_address = os.getenv('VAULT_ADDRESS')  
     supervault = initialize_supervault(chain_id, vault_address)
     whitelisted_vaults = get_whitelisted_vaults(supervault)
     supervault_data = get_supervault_data(supervault)

@@ -1,44 +1,38 @@
 # super-vault
 ETH SuperUSDC Data Pipeline
 
+### Quick Setup
 
-### Steps to Run the Pipeline
-
-1. **Install**
-   - Clone the repo:
+1. **Prerequisites**
+   - Install [Docker](https://docs.docker.com/get-docker/)
+   - Install [uv](https://github.com/astral-sh/uv):
      ```bash
-     git clone git@github.com:karolsudol/super-vault.git
-     cd super-vault
+     curl -LsSf https://astral.sh/uv/install.sh | sh
      ```
 
-   - Install Python dependencies:
-     ```bash
-     uv sync
-     source .venv/bin/activate
-     ```
+2. **Installation**
+   ```bash
+   git clone git@github.com:karolsudol/super-vault.git
+   cd super-vault
+   chmod +x setup.sh
+   ./setup.sh
+   ```
 
-   - Install dbt and ClickHouse:
-     ```bash
-     docker-compose up -d
-     ```
+3. **Configuration**
+   - Edit the `.env` file with your specific configurations
+   - Access the Prefect UI at http://localhost:4200
 
-2. **Run the dbt project**
-   - Run the dbt project:
-     ```bash
-     dbt run
-     ```
+4. **Cleanup**
+   ```bash
+   # Stop Prefect server and worker
+   pkill -f "prefect"
+   
+   # Stop ClickHouse
+   docker-compose down
+   
+   # Deactivate virtual environment
+   deactivate
+   ```
 
-3. **Run the pipeline**
-   - Run the pipeline:
-     ```bash
-     cp .env.example .env
-     prefect server start
-     python flows/super_vault.py
-     ```
-
-4. **Clean up**
-   - Clean up:
-     ```bash
-     deactivate
-     docker-compose down
-     ```
+### Additional Information
+For detailed information about the pipeline and its components, please refer to the documentation in the `docs/` directory.
