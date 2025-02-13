@@ -1,0 +1,17 @@
+<clickhouse>
+    <path>/var/lib/clickhouse</path>
+    <tmp_path>/var/lib/clickhouse/tmp</tmp_path>
+    <user_files_path>/var/lib/clickhouse/user_files</user_files_path>
+    <format_schema_path>/var/lib/clickhouse/format_schemas</format_schema_path>
+    
+    <logger>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+    </logger>
+
+    <profiles>
+        <default>
+            <max_query_size>150000</max_query_size>
+        </default>
+    </profiles>
+</clickhouse>

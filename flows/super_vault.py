@@ -128,7 +128,7 @@ def get_supervault_data(supervault):
 
 with Flow("SuperVault Flow") as flow:
     chain_id = 1  # Ethereum chain ID
-    vault_address = os.getenv('VAULT_ADDRESS')  # Get address from .env.local
+    vault_address = os.getenv('VAULT_ADDRESS')  
     supervault = initialize_supervault(chain_id, vault_address)
     whitelisted_vaults = get_whitelisted_vaults(supervault)
     supervault_data = get_supervault_data(supervault)
