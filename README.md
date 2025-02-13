@@ -22,9 +22,9 @@ ETH SuperUSDC Data Pipeline
      docker-compose up -d
      ```
 
-   - Wait for the ClickHouse server to be ready:
+   - Connect to the ClickHouse server:
      ```bash
-      docker-compose exec clickhouse-server clickhouse-client --query "SELECT * FROM system.databases"
+     docker-compose exec clickhouse-server clickhouse-client
      ```
 
    - Run sql query to check if the ClickHouse server is ready:

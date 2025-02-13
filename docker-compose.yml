@@ -1,15 +1,6 @@
 # docker-compose.yml
 version: '3.8'
 services:
-  dbt:
-    image: fishtownanalytics/dbt:1.0.0
-    volumes:
-      - ./dbt:/usr/app/dbt
-    environment:
-      DBT_PROFILES_DIR: ${DBT_PROFILES_DIR}
-    command: dbt run
-    depends_on:
-      - clickhouse-server
 
   clickhouse-server:
     image: clickhouse/clickhouse-server:24.3.6
@@ -28,9 +19,13 @@ services:
       - IPC_LOCK
       - SYS_PTRACE
 
-  clickhouse-init:
-    image: clickhouse/clickhouse-client
-    command: ["clickhouse-client", "--multiquery", "--host=clickhouse-server", "--query=select 1"]
+  dbt:
+    image: fishtownanalytics/dbt:1.0.0
+    volumes:
+      - ./dbt:/usr/app/dbt
+    environment:
+      DBT_PROFILES_DIR: ${DBT_PROFILES_DIR}
+    command: dbt run
     depends_on:
       - clickhouse-server
 
