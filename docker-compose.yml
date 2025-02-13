@@ -28,5 +28,11 @@ services:
       - IPC_LOCK
       - SYS_PTRACE
 
+  clickhouse-init:
+    image: clickhouse/clickhouse-client
+    command: ["clickhouse-client", "--multiquery", "--host=clickhouse-server", "--query=select 1"]
+    depends_on:
+      - clickhouse-server
+
 
     
