@@ -4,7 +4,7 @@ ETH SuperUSDC Data Pipeline
 ### Quick Setup
 
 1. **Prerequisites**
-   - Install [Docker](https://docs.docker.com/get-docker/)
+   - Install [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
    - Install [uv](https://github.com/astral-sh/uv):
      ```bash
      curl -LsSf https://astral.sh/uv/install.sh | sh
