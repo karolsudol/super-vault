@@ -5,6 +5,7 @@
 .venv
 .python-version
 uv.lock
-clickhouse
-data
-logs
+clickhouse/data
+clickhouse/logs
+.dbt
+dbt/logs
