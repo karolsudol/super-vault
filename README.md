@@ -25,7 +25,7 @@ ETH SuperUSDC Data Pipeline
 4. **Cleanup**
    ```bash
    # Stop Prefect server and worker
-   pkill -f "prefect"
+   uvx prefect server stop
    
    # Stop ClickHouse
    docker-compose down

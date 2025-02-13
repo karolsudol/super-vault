@@ -19,15 +19,5 @@ services:
       - IPC_LOCK
       - SYS_PTRACE
 
-  dbt:
-    image: fishtownanalytics/dbt:1.0.0
-    volumes:
-      - ./dbt:/usr/app/dbt
-    environment:
-      DBT_PROFILES_DIR: ${DBT_PROFILES_DIR}
-    command: dbt run
-    depends_on:
-      - clickhouse-server
-
 
     
