@@ -10,24 +10,14 @@ services:
         soft: 262144
         hard: 262144
     volumes:
-      - ./data:/var/lib/clickhouse
-      - ./logs:/var/log/clickhouse-server
+      - ./clickhouse/data:/var/lib/clickhouse
+      - ./clickhouse/logs:/var/log/clickhouse-server
     network_mode: host
     cap_add:
       - SYS_NICE
       - NET_ADMIN
       - IPC_LOCK
       - SYS_PTRACE
-
-  dbt:
-    image: fishtownanalytics/dbt:1.0.0
-    volumes:
-      - ./dbt:/usr/app/dbt
-    environment:
-      DBT_PROFILES_DIR: ${DBT_PROFILES_DIR}
-    command: dbt run
-    depends_on:
-      - clickhouse-server
 
 
     

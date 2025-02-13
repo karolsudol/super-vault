@@ -43,9 +43,40 @@ for i in {1..30}; do
     sleep 1
 done
 
+# Initialize DBT
+echo "🔧 Initializing DBT..."
+mkdir -p dbt
+mkdir -p .dbt
+
+# Create profiles.yml if it doesn't exist
+if [ ! -f .dbt/profiles.yml ]; then
+    cat > .dbt/profiles.yml << EOF
+default:
+  target: dev
+  outputs:
+    dev:
+      type: clickhouse
+      schema: default
+      host: localhost
+      port: 8123
+      user: default
+      password: ''
+      secure: False
+EOF
+    echo "✅ Created DBT profiles.yml"
+fi
+
+# Initialize DBT project if not already initialized
+if [ ! -f dbt/dbt_project.yml ]; then
+    docker-compose run --rm dbt init my_project
+    mv my_project/* dbt/
+    rm -rf my_project
+    echo "✅ Initialized DBT project"
+fi
+
 # Start Prefect server in the background
 echo "🌟 Starting Prefect server..."
-prefect server start &
+uvx prefect server start &
 PREFECT_PID=$!
 
 # Wait for Prefect server to be ready
@@ -58,8 +89,8 @@ python flows/deployments.py
 
 # Start Prefect worker
 echo "👷 Starting Prefect worker..."
-prefect worker start -p "default" &
-WORKER_PID=$!
+uvx prefect worker start -p "default" &
+WORKER_PID=$! 
 
 echo """
 🎉 Setup complete! Your environment is ready:
