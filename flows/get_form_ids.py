@@ -129,18 +129,43 @@ def print_supervault_info(supervault, vault_address):
         
         # Create and print DataFrame
         df_supervault = pd.DataFrame(data)
-        print(df_supervault)
+        
+        # Print detailed information
+        print("\n=== SuperVault Information ===")
+        print(f"Vault Address: {vault_address}")
+        print("\nWhitelist Data:")
+        print(df_supervault.to_string())
+        
+        # Get additional data
+        vault_data = supervault.functions.getSuperVaultData().call()
+        deposit_limit = supervault.functions.depositLimit().call()
+        available_deposit = supervault.functions.availableDepositLimit(vault_address).call()
+        available_withdraw = supervault.functions.availableWithdrawLimit(vault_address).call()
+        num_superforms = supervault.functions.numberOfSuperforms().call()
+        strategist = supervault.functions.strategist().call()
+        vault_manager = supervault.functions.vaultManager().call()
+        tokenized_strategy = supervault.functions.tokenizedStrategyAddress().call()
+        
+        print("\nVault Metrics:")
+        print(f"Deposit Limit: {deposit_limit}")
+        print(f"Available Deposit Limit: {available_deposit}")
+        print(f"Available Withdraw Limit: {available_withdraw}")
+        print(f"Number of Superforms: {num_superforms}")
+        print(f"Strategist: {strategist}")
+        print(f"Vault Manager: {vault_manager}")
+        print(f"Tokenized Strategy: {tokenized_strategy}")
+        print("===========================\n")
         
         return {
             'whitelist': whitelist,
-            'vault_data': supervault.functions.getSuperVaultData().call(),
-            'deposit_limit': supervault.functions.depositLimit().call(),
-            'available_deposit_limit': supervault.functions.availableDepositLimit(vault_address).call(),
-            'available_withdraw_limit': supervault.functions.availableWithdrawLimit(vault_address).call(),
-            'number_of_superforms': supervault.functions.numberOfSuperforms().call(),
-            'strategist': supervault.functions.strategist().call(),
-            'vault_manager': supervault.functions.vaultManager().call(),
-            'tokenized_strategy': supervault.functions.tokenizedStrategyAddress().call()
+            'vault_data': vault_data,
+            'deposit_limit': deposit_limit,
+            'available_deposit_limit': available_deposit,
+            'available_withdraw_limit': available_withdraw,
+            'number_of_superforms': num_superforms,
+            'strategist': strategist,
+            'vault_manager': vault_manager,
+            'tokenized_strategy': tokenized_strategy
         }
         
     except Exception as e:
@@ -265,25 +290,25 @@ def supervault_flow():
     """
     create_table_flow(whitelist_query)
     
-    metrics_query = """
-        CREATE TABLE IF NOT EXISTS supervault_metrics (
-            vault_address String,
-            deposit_limit UInt256,
-            available_deposit_limit UInt256,
-            available_withdraw_limit UInt256,
-            number_of_superforms UInt64,
-            strategist String,
-            vault_manager String,
-            tokenized_strategy String,
-            timestamp DateTime
-        ) ENGINE = MergeTree()
-        ORDER BY (timestamp, vault_address)
-    """
-    create_table_flow(metrics_query)
+    # metrics_query = """
+    #     CREATE TABLE IF NOT EXISTS supervault_metrics (
+    #         vault_address String,
+    #         deposit_limit UInt256,
+    #         available_deposit_limit UInt256,
+    #         available_withdraw_limit UInt256,
+    #         number_of_superforms UInt64,
+    #         strategist String,
+    #         vault_manager String,
+    #         tokenized_strategy String,
+    #         timestamp DateTime
+    #     ) ENGINE = MergeTree()
+    #     ORDER BY (timestamp, vault_address)
+    # """
+    # create_table_flow(metrics_query)
     
     # Write data to ClickHouse
-    write_data_flow(formatted_data['whitelist'], 'supervault_whitelist')
-    write_data_flow(formatted_data['metrics'], 'supervault_metrics')
+    # write_data_flow(formatted_data['whitelist'], 'supervault_whitelist')
+    # write_data_flow(formatted_data['metrics'], 'supervault_metrics')
     
     return contract_info
 
