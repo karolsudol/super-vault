@@ -7,6 +7,7 @@ from web3.middleware import ExtraDataToPOAMiddleware
 from prefect import task, flow, get_run_logger
 from prefect.exceptions import PrefectException
 from prefect.tasks import NO_CACHE
+import pandas as pd
 
 load_dotenv(".env")
 
@@ -109,49 +110,34 @@ def initialize_supervault(chain_id, vault_address):
 def print_supervault_info(supervault, vault_address):
     logger = get_run_logger()
     try:
-        logger.info("Fetching SuperVault contract data...")
-        
         # Basic contract data
         whitelist = supervault.functions.getWhitelist().call()
-        vault_data = supervault.functions.getSuperVaultData().call()
         
-        # Limits and configurations
-        deposit_limit = supervault.functions.depositLimit().call()
-        available_deposit_limit = supervault.functions.availableDepositLimit(vault_address).call()
-        available_withdraw_limit = supervault.functions.availableWithdrawLimit(vault_address).call()
-        number_of_superforms = supervault.functions.numberOfSuperforms().call()
+        # Create DataFrame from whitelist
+        data = [
+            {
+                'form_id': form_id,
+                'form_id_hex': hex(form_id),
+                'chain_id': supervault.w3.eth.chain_id,
+                'vault_address': vault_address
+            }
+            for form_id in whitelist
+        ]
         
-        # Core addresses
-        strategist = supervault.functions.strategist().call()
-        vault_manager = supervault.functions.vaultManager().call()
-        tokenized_strategy = supervault.functions.tokenizedStrategyAddress().call()
-        
-        # Print the information
-        print("\n=== SuperVault Information ===")
-        print(f"\nWhitelist: {whitelist}")
-        print("\nVault Data:")
-        print(f"- Superform IDs: {vault_data[0]}")
-        print(f"- Weights: {vault_data[1]}")
-        print("\nLimits:")
-        print(f"- Deposit Limit: {deposit_limit}")
-        print(f"- Available Deposit Limit: {available_deposit_limit}")
-        print(f"- Available Withdraw Limit: {available_withdraw_limit}")
-        print(f"- Number of Superforms: {number_of_superforms}")
-        print("\nCore Addresses:")
-        print(f"- Strategist: {strategist}")
-        print(f"- Vault Manager: {vault_manager}")
-        print(f"- Tokenized Strategy: {tokenized_strategy}")
+        # Create and print DataFrame
+        df_supervault = pd.DataFrame(data)
+        print(df_supervault)
         
         return {
             'whitelist': whitelist,
-            'vault_data': vault_data,
-            'deposit_limit': deposit_limit,
-            'available_deposit_limit': available_deposit_limit,
-            'available_withdraw_limit': available_withdraw_limit,
-            'number_of_superforms': number_of_superforms,
-            'strategist': strategist,
-            'vault_manager': vault_manager,
-            'tokenized_strategy': tokenized_strategy
+            'vault_data': supervault.functions.getSuperVaultData().call(),
+            'deposit_limit': supervault.functions.depositLimit().call(),
+            'available_deposit_limit': supervault.functions.availableDepositLimit(vault_address).call(),
+            'available_withdraw_limit': supervault.functions.availableWithdrawLimit(vault_address).call(),
+            'number_of_superforms': supervault.functions.numberOfSuperforms().call(),
+            'strategist': supervault.functions.strategist().call(),
+            'vault_manager': supervault.functions.vaultManager().call(),
+            'tokenized_strategy': supervault.functions.tokenizedStrategyAddress().call()
         }
         
     except Exception as e:
