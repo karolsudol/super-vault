@@ -106,30 +106,54 @@ def initialize_supervault(chain_id, vault_address):
         raise PrefectException(f"Failed to initialize SuperVault: {str(e)}") from e
 
 @task(cache_policy=NO_CACHE)
-def print_supervault_info(supervault):
+def print_supervault_info(supervault, vault_address):
     logger = get_run_logger()
     try:
-        logger.info("Fetching all SuperVault contract data...")
+        logger.info("Fetching SuperVault contract data...")
         
-        # Get basic contract data
+        # Basic contract data
         whitelist = supervault.functions.getWhitelist().call()
         vault_data = supervault.functions.getSuperVaultData().call()
         
-        # Print all data in a readable format
-        print("\n=== SuperVault Contract Information ===")
-        print("\nWhitelisted Vaults:")
-        for vault in whitelist:
-            print(f"- {vault}")
-            
-        print("\nSuperVault Data:")
-        print(f"Superform IDs: {vault_data[0]}")
-        print(f"Weights: {vault_data[1]}")
+        # Limits and configurations
+        deposit_limit = supervault.functions.depositLimit().call()
+        available_deposit_limit = supervault.functions.availableDepositLimit(vault_address).call()
+        available_withdraw_limit = supervault.functions.availableWithdrawLimit(vault_address).call()
+        number_of_superforms = supervault.functions.numberOfSuperforms().call()
+        
+        # Core addresses
+        strategist = supervault.functions.strategist().call()
+        vault_manager = supervault.functions.vaultManager().call()
+        tokenized_strategy = supervault.functions.tokenizedStrategyAddress().call()
+        
+        # Print the information
+        print("\n=== SuperVault Information ===")
+        print(f"\nWhitelist: {whitelist}")
+        print("\nVault Data:")
+        print(f"- Superform IDs: {vault_data[0]}")
+        print(f"- Weights: {vault_data[1]}")
+        print("\nLimits:")
+        print(f"- Deposit Limit: {deposit_limit}")
+        print(f"- Available Deposit Limit: {available_deposit_limit}")
+        print(f"- Available Withdraw Limit: {available_withdraw_limit}")
+        print(f"- Number of Superforms: {number_of_superforms}")
+        print("\nCore Addresses:")
+        print(f"- Strategist: {strategist}")
+        print(f"- Vault Manager: {vault_manager}")
+        print(f"- Tokenized Strategy: {tokenized_strategy}")
         
         return {
             'whitelist': whitelist,
-            'superform_ids': vault_data[0],
-            'weights': vault_data[1]
+            'vault_data': vault_data,
+            'deposit_limit': deposit_limit,
+            'available_deposit_limit': available_deposit_limit,
+            'available_withdraw_limit': available_withdraw_limit,
+            'number_of_superforms': number_of_superforms,
+            'strategist': strategist,
+            'vault_manager': vault_manager,
+            'tokenized_strategy': tokenized_strategy
         }
+        
     except Exception as e:
         logger.error("Error fetching supervault info: %s", str(e))
         raise PrefectException("Failed to fetch supervault info") from e
@@ -143,7 +167,7 @@ def supervault_flow():
     logger.info(f"Starting SuperVault flow with chain_id={chain_id}, vault_address={vault_address}")
     
     supervault = initialize_supervault(chain_id, vault_address)
-    contract_info = print_supervault_info(supervault)
+    contract_info = print_supervault_info(supervault, vault_address)
     return contract_info
 
 if __name__ == "__main__":
